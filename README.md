@@ -104,6 +104,10 @@ Transformer attention heatmap:
 
 ![Attention Heatmap](results/attention_heatmap.png)
 
+Transformer Feature Importance:
+
+![Attention Heatmap](results/feature_importance.png)
+
 Feature correlation matrix:
 
 ![Correlation Matrix](results/correlation_matrix.png)
