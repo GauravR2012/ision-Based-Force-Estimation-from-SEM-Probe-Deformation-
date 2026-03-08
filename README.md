@@ -4,72 +4,113 @@ A computer vision and deep learning framework for estimating micro/nanoscale for
 
 ---
 
-## Overview
+# Overview
 
-Measuring forces at the micro–nano scale is challenging because traditional sensors such as strain gauges and piezoresistive sensors introduce noise, complexity, or intrusive instrumentation. This project proposes a **vision-based force sensing system** that estimates applied force by analyzing deformation of a micro-cantilever probe in SEM video frames.
+Measuring forces at the micro–nano scale is challenging because traditional sensors such as strain gauges or piezoresistive cantilevers introduce additional complexity, noise, or intrusive instrumentation.
 
-The system uses computer vision techniques and deep learning models to learn the mapping between **probe deformation features and applied force values**, enabling accurate force estimation without physical force sensors.
+This project proposes a **vision-based force sensing system** that estimates the applied force by analyzing deformation of a micro-probe captured in SEM video frames.
+
+Instead of relying on physical force sensors, the system learns the relationship between **visual deformation features and applied forces** using machine learning models.
 
 ---
 
-## Pipeline
+# Pipeline
 
 ![Pipeline](assets/pipeline.png)
 
-The full system pipeline consists of the following stages:
+The full pipeline consists of the following stages:
 
-1. **Frame Extraction**
-2. **Probe Detection (YOLOv5)**
-3. **Probe Segmentation (SAM2)**
-4. **Image Processing & Contour Extraction**
-5. **Geometric Feature Extraction**
-6. **Machine Learning Force Prediction**
+1. Frame extraction from SEM video
+2. Probe detection using YOLOv5
+3. Probe segmentation using SAM2
+4. Mask processing and contour extraction
+5. Geometric feature extraction
+6. Machine learning force prediction
+
+Pipeline summary:
+
+```
+SEM Video
+   ↓
+Probe Detection (YOLOv5)
+   ↓
+Segmentation (SAM2)
+   ↓
+Binary Probe Mask
+   ↓
+Contour Detection
+   ↓
+Feature Extraction
+   ↓
+ML Models (MLP / LSTM / Transformer)
+   ↓
+Force Prediction
+```
 
 ---
 
-## Features Extracted
+# Features Extracted
 
-The following geometric and spatial features are extracted from probe contours:
+The following geometric features are extracted from the probe contour:
 
-* centroid coordinates (cx, cy)
+* centroid coordinates
 * bounding box parameters
-* contour area and perimeter
-* aspect ratio
+* contour area
+* perimeter
+* Hu moments
+* convex hull solidity
 * extent
+* aspect ratio
+* equivalent diameter
 * eccentricity
 * orientation angle
-* Hu moments
-* **tip deflection (most important feature)**
+* **tip deflection**
 
-These features represent probe deformation caused by applied forces.
-
----
-
-## Models Used
-
-Three machine learning architectures were evaluated:
-
-* **Feedforward Neural Network (FNN)**
-* **Long Short-Term Memory (LSTM)**
-* **Transformer Model**
-
-The **Transformer model achieved the best prediction performance** due to its ability to capture temporal relationships in deformation patterns.
+Tip deflection acts as the **primary physical indicator of applied force**.
 
 ---
 
-## Example Results
+# Models Used
 
-Predicted force vs ground truth:
+Three machine learning architectures were implemented:
 
-![Prediction](assets/force_prediction.png)
+### Feedforward Neural Network (MLP)
 
-Training curves comparison:
+Fully connected network used as a baseline model.
 
-![Training Curves](assets/training_curves.png)
+### Long Short-Term Memory (LSTM)
+
+Captures temporal relationships between probe deformation across frames.
+
+### Transformer Model
+
+Uses self-attention to model temporal dependencies and complex feature interactions.
+
+The **Transformer model achieved the best performance**.
 
 ---
 
-## Repository Structure
+# Example Results
+
+Predicted vs actual force comparison:
+
+![Force Prediction](results/force_prediction.png)
+
+Training loss curves:
+
+![Training Loss](results/training_loss.png)
+
+Transformer attention heatmap:
+
+![Attention Heatmap](results/attention_heatmap.png)
+
+Feature correlation matrix:
+
+![Correlation Matrix](results/correlation_matrix.png)
+
+---
+
+# Repository Structure
 
 ```
 vision-based-force-estimation
@@ -78,28 +119,38 @@ vision-based-force-estimation
 ├── requirements.txt
 │
 ├── src
-│   ├── frame_extraction.py
-│   ├── segmentation_processing.py
-│   ├── feature_extraction.py
-│   ├── dataset_builder.py
-│   ├── train_models.py
-│   └── inference.py
+│   ├── run_pipeline.py
+│   │
+│   ├── preprocessing
+│   │   └── probe_mask_extraction.py
+│   │
+│   ├── feature_engineering
+│   │   └── feature_extraction.py
+│   │
+│   ├── models
+│   │   ├── train_models.py
+│   │   ├── mlp_model.py
+│   │   └── transformer_model.py
+│   │
+│   └── analysis
+│       └── analysis_plots.py
+│
+├── results
+│   ├── force_prediction.png
+│   ├── training_loss.png
+│   ├── attention_heatmap.png
+│   └── correlation_matrix.png
 │
 ├── assets
-│   ├── pipeline.png
-│   ├── training_curves.png
-│   └── force_prediction.png
+│   └── pipeline.png
 │
-├── demo
-│   └── probe_deflection.gif
-│
-└── sample_data
-    └── example_frame.png
+└── demo
+    └── probe_deflection.gif
 ```
 
 ---
 
-## Installation
+# Installation
 
 Clone the repository
 
@@ -116,35 +167,62 @@ pip install -r requirements.txt
 
 ---
 
-## Running the Pipeline
+# Running the Pipeline
 
-Example workflow:
+Run the full pipeline:
 
 ```
-python src/frame_extraction.py
-python src/feature_extraction.py
-python src/train_models.py
+python src/run_pipeline.py
 ```
+
+This executes the following steps:
+
+1. Probe mask extraction
+2. Feature extraction
+3. Dataset generation
+4. Model training
+5. Evaluation and visualization
 
 ---
 
-## Applications
+# Dataset
 
-* Nanomanipulation inside SEM
-* Nanorobotics research
-* MEMS/NEMS testing
+The SEM dataset used in this project is **not publicly shared**.
+
+Reasons:
+
+* Data was collected from a laboratory SEM system
+* Experimental datasets belong to institutional research infrastructure
+
+Therefore this repository includes:
+
+* Code implementation
+* Result visualizations
+* Example pipeline demonstration
+
+But **does not include raw SEM data**.
+
+---
+
+# Applications
+
+Vision-based force sensing has applications in:
+
+* nanorobotic manipulation
+* MEMS and NEMS testing
 * AFM probe characterization
-* Bio-cellular force analysis
+* bio-cellular mechanics
+* SEM-based nanomanipulation
 
 ---
 
-## Author
+# Author
 
-**Gaurav Ramteke**
+Gaurav Ramteke
 Indian Institute of Technology Kharagpur
 
 ---
 
-## License
+# License
 
 MIT License
