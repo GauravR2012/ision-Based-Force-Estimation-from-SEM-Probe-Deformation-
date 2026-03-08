@@ -159,7 +159,7 @@ vision-based-force-estimation
 Clone the repository
 
 ```
-git clone https://github.com/YOUR_USERNAME/vision-based-force-estimation
+git clone https://github.com/GauravR2012/vision-based-force-estimation
 cd vision-based-force-estimation
 ```
 
