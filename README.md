@@ -102,7 +102,7 @@ Training loss curves:
 
 Transformer attention heatmap:
 
-![Attention Heatmap](results/attention_heatmap.png)
+![Attention Heatmap](results/heatmap.png)
 
 Transformer Feature Importance:
 
